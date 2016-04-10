@@ -28,30 +28,33 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class JZ extends ApplicationAdapter implements GestureDetector.GestureListener {
-    private static final int ARROW_WIDTH = 200;
-    private static final int ARROW_HEIGHT = 151;
+    private static final int X_ARROW_WIDTH = 150;
+    private static final int X_ARROW_HEIGHT = 113;
+    private static final int Y_ARROW_WIDTH = 113;
+    private static final int Y_ARROW_HEIGHT = 150;
+    private int width;
+    private int height;
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
     private Texture texture;
     private SpriteBatch spriteBatch;
     private OrthographicCamera guicam;
-    private Rectangle wleftBounds;
-    private Rectangle wrightBounds;
     private Vector3 touchPoint;
-    private Texture leftTexture;
-    private Texture rightTexture;
+
+    private Button leftArrowKey;
+    private Button rightArrowKey;
 
     @Override
     public void create() {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
 
         spriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, w, h);
+        camera.setToOrtho(false, width, height);
         camera.update();
 
         tiledMap = new TmxMapLoader().load("water.tmx");
@@ -59,14 +62,12 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
 
         texture = new Texture(Gdx.files.internal("pikachu.png"));
 
-        guicam = new OrthographicCamera(w, h);
-        guicam.position.set(w/2f, h/2f, 0);
+        guicam = new OrthographicCamera(width, height);
+        guicam.position.set(width/2f, height/2f, 0);
         guicam.update();
 
-        wleftBounds = new Rectangle(w - ARROW_WIDTH*2, 0, ARROW_WIDTH, ARROW_HEIGHT);
-        wrightBounds = new Rectangle(w - ARROW_WIDTH, 0, ARROW_WIDTH, ARROW_HEIGHT);
-        leftTexture = new Texture(Gdx.files.internal("left_arrow.png"));
-        rightTexture = new Texture(Gdx.files.internal("right_arrow.png"));
+        leftArrowKey = new Button(width - X_ARROW_WIDTH*2, 0, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
+        rightArrowKey = new Button(width - X_ARROW_WIDTH, 0, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
 
         GestureDetector gestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(gestureDetector);
@@ -83,18 +84,20 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
 
         spriteBatch.begin();
         spriteBatch.draw(texture, 0, 0);
-        spriteBatch.draw(leftTexture, wleftBounds.x, wleftBounds.y, wleftBounds.width, wleftBounds.height);
-        spriteBatch.draw(rightTexture, wrightBounds.x, wrightBounds.y, wrightBounds.width, wrightBounds.height);
+        spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
+        spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
         spriteBatch.end();
     }
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
         guicam.unproject(touchPoint.set(x, y, 0));
-        if (wleftBounds.contains(touchPoint.x, touchPoint.y)) {
+
+        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             camera.position.x -= 300;
             camera.update();
-        } else if ( wrightBounds.contains(touchPoint.x, touchPoint.y) ) {
+
+        } else if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             camera.position.x += 300;
             camera.update();
         }
