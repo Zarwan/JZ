@@ -30,10 +30,10 @@ import com.badlogic.gdx.math.Vector3;
 public class JZ extends ApplicationAdapter implements GestureDetector.GestureListener {
     private static final int ARROW_WIDTH = 200;
     private static final int ARROW_HEIGHT = 151;
+    private static final float UNIT = 300;
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
-    private Texture texture;
     private SpriteBatch spriteBatch;
     private OrthographicCamera guicam;
     private Rectangle wleftBounds;
@@ -41,11 +41,14 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private Vector3 touchPoint;
     private Texture leftTexture;
     private Texture rightTexture;
+    private Player player;
 
     @Override
     public void create() {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
+
+        player = new Player(UNIT);
 
         spriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
@@ -56,8 +59,6 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
 
         tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-        texture = new Texture(Gdx.files.internal("pikachu.png"));
 
         guicam = new OrthographicCamera(w, h);
         guicam.position.set(w/2f, h/2f, 0);
@@ -82,7 +83,7 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         tiledMapRenderer.render();
 
         spriteBatch.begin();
-        spriteBatch.draw(texture, 0, 0);
+        spriteBatch.draw(player.getTexture(), 0, 0);
         spriteBatch.draw(leftTexture, wleftBounds.x, wleftBounds.y, wleftBounds.width, wleftBounds.height);
         spriteBatch.draw(rightTexture, wrightBounds.x, wrightBounds.y, wrightBounds.width, wrightBounds.height);
         spriteBatch.end();
@@ -92,10 +93,12 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     public boolean touchDown(float x, float y, int pointer, int button) {
         guicam.unproject(touchPoint.set(x, y, 0));
         if (wleftBounds.contains(touchPoint.x, touchPoint.y)) {
-            camera.position.x -= 300;
+            player.moveLeft();
+            camera.position.x -= UNIT;
             camera.update();
-        } else if ( wrightBounds.contains(touchPoint.x, touchPoint.y) ) {
-            camera.position.x += 300;
+        } else if (wrightBounds.contains(touchPoint.x, touchPoint.y)) {
+            player.moveRight();
+            camera.position.x += UNIT;
             camera.update();
         }
         return false;
