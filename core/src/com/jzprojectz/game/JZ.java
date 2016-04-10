@@ -43,6 +43,8 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private Vector3 touchPoint;
     private Button leftArrowKey;
     private Button rightArrowKey;
+    private Button upArrowKey;
+    private Button downArrowKey;
     private Player player;
 
     @Override
@@ -66,8 +68,11 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         guicam.position.set(width/2f, height/2f, 0);
         guicam.update();
 
-        leftArrowKey = new Button(width - X_ARROW_WIDTH*2, 0, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
-        rightArrowKey = new Button(width - X_ARROW_WIDTH, 0, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
+        leftArrowKey = new Button(width - X_ARROW_WIDTH*2, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
+        rightArrowKey = new Button(width - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
+        upArrowKey = new Button(width - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, Y_ARROW_HEIGHT + X_ARROW_HEIGHT, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "up_arrow.png");
+        downArrowKey = new Button(width - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, 0, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "down_arrow.png");
+
 
         GestureDetector gestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(gestureDetector);
@@ -86,6 +91,8 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         spriteBatch.draw(player.getTexture(), 0, 0);
         spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
         spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
+        spriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
+        spriteBatch.draw(downArrowKey.getTexture(), downArrowKey.getXBound(), downArrowKey.getYBound(), downArrowKey.getWidth(), downArrowKey.getHeight());
         spriteBatch.end();
     }
 
@@ -98,7 +105,7 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
             camera.position.x -= UNIT;
             camera.update();
 
-        } else if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+        } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             player.moveRight();
             camera.position.x += UNIT;
             camera.update();
