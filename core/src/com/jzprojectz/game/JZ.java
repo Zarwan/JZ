@@ -34,21 +34,23 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private static final int Y_ARROW_HEIGHT = 150;
     private int width;
     private int height;
+    private static final float UNIT = 300;
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
-    private Texture texture;
     private SpriteBatch spriteBatch;
     private OrthographicCamera guicam;
     private Vector3 touchPoint;
-
     private Button leftArrowKey;
     private Button rightArrowKey;
+    private Player player;
 
     @Override
     public void create() {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+
+        player = new Player(UNIT);
 
         spriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
@@ -59,8 +61,6 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
 
         tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-        texture = new Texture(Gdx.files.internal("pikachu.png"));
 
         guicam = new OrthographicCamera(width, height);
         guicam.position.set(width/2f, height/2f, 0);
@@ -83,7 +83,7 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         tiledMapRenderer.render();
 
         spriteBatch.begin();
-        spriteBatch.draw(texture, 0, 0);
+        spriteBatch.draw(player.getTexture(), 0, 0);
         spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
         spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
         spriteBatch.end();
@@ -94,11 +94,13 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         guicam.unproject(touchPoint.set(x, y, 0));
 
         if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
-            camera.position.x -= 300;
+            player.moveLeft();
+            camera.position.x -= UNIT;
             camera.update();
 
         } else if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
-            camera.position.x += 300;
+            player.moveRight();
+            camera.position.x += UNIT;
             camera.update();
         }
         return false;
