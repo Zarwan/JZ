@@ -33,7 +33,7 @@ public class JZ extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
         camera.update();
-        tiledMap = new TmxMapLoader().load("desert.tmx");
+        tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 
