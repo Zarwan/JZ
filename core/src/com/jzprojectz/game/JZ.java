@@ -88,7 +88,7 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         tiledMapRenderer.render();
 
         spriteBatch.begin();
-        spriteBatch.draw(player.getTexture(), 0, 0);
+        spriteBatch.draw(player.getTexture(), player.getX(), player.getY());
         spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
         spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
         spriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
@@ -104,10 +104,17 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
             player.moveLeft();
             camera.position.x -= UNIT;
             camera.update();
-
         } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             player.moveRight();
             camera.position.x += UNIT;
+            camera.update();
+        } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+            player.moveUp();
+            camera.position.y += UNIT;
+            camera.update();
+        } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+            player.moveDown();
+            camera.position.y -= UNIT;
             camera.update();
         }
         return false;
