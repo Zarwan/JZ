@@ -26,6 +26,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class JZ extends ApplicationAdapter {
+    private static final int ARROW_WIDTH = 200;
+    private static final int ARROW_HEIGHT = 151;
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
@@ -49,17 +51,18 @@ public class JZ extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
         camera.update();
+
         tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
         texture = new Texture(Gdx.files.internal("pikachu.png"));
 
         guicam = new OrthographicCamera(w, h);
         guicam.position.set(w/2f, h/2f, 0);
         guicam.update();
 
-        wleftBounds = new Rectangle(w - 400, 0, 200, 151);
-        wrightBounds = new Rectangle(w - 200, 0, 200, 151);
-
+        wleftBounds = new Rectangle(w - ARROW_WIDTH*2, 0, ARROW_WIDTH, ARROW_HEIGHT);
+        wrightBounds = new Rectangle(w - ARROW_WIDTH, 0, ARROW_WIDTH, ARROW_HEIGHT);
         leftTexture = new Texture(Gdx.files.internal("left_arrow.png"));
         rightTexture = new Texture(Gdx.files.internal("right_arrow.png"));
     }
