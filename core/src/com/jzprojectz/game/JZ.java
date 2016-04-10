@@ -12,38 +12,83 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TideMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class JZ extends ApplicationAdapter {
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
+    private Texture texture;
+    private SpriteBatch spriteBatch;
+    private OrthographicCamera guicam;
+    private Rectangle wleftBounds;
+    private Rectangle wrightBounds;
+    private Vector3 touchPoint;
+    private Texture leftTexture;
+    private Texture rightTexture;
 
     @Override
-    public void create () {
+    public void create() {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
+        spriteBatch = new SpriteBatch();
+        touchPoint = new Vector3();
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false,w,h);
+        camera.setToOrtho(false, w, h);
         camera.update();
         tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        texture = new Texture(Gdx.files.internal("pikachu.png"));
+
+        guicam = new OrthographicCamera(w, h);
+        guicam.position.set(w/2f, h/2f, 0);
+        guicam.update();
+
+        wleftBounds = new Rectangle(w - 400, 0, 200, 151);
+        wrightBounds = new Rectangle(w - 200, 0, 200, 151);
+
+        leftTexture = new Texture(Gdx.files.internal("left_arrow.png"));
+        rightTexture = new Texture(Gdx.files.internal("right_arrow.png"));
     }
 
     @Override
-    public void render () {
+    public void render() {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+
+        for (int i = 0; i < 5; i++) {
+            if (!Gdx.input.isTouched(i)) continue;
+
+            guicam.unproject(touchPoint.set(Gdx.input.getX(i), Gdx.input.getY(i), 0));
+
+            if (wleftBounds.contains(touchPoint.x, touchPoint.y)) {
+                System.out.println("Left!");
+            } else if (wrightBounds.contains(touchPoint.x, touchPoint.y)) {
+                System.out.println("Right!");
+            }
+        }
+
+        spriteBatch.begin();
+        spriteBatch.draw(texture, 0, 0);
+        spriteBatch.draw(leftTexture, wleftBounds.x, wleftBounds.y, wleftBounds.width, wleftBounds.height);
+        spriteBatch.draw(rightTexture, wrightBounds.x, wrightBounds.y, wrightBounds.width, wrightBounds.height);
+        spriteBatch.end();
     }
 }
