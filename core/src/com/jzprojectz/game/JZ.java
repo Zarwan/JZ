@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -33,6 +32,8 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private Button upArrowKey;
     private Button downArrowKey;
     private Player player;
+    private float screenUnitsWidth;
+    private float screenUnitsHeight;
 
     @Override
     public void create() {
@@ -48,12 +49,16 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         camera.setToOrtho(false, width, height);
         camera.update();
 
+        screenUnitsWidth = camera.position.x * 2;
+        screenUnitsHeight = camera.position.y * 2;
+
         tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         guicam = new OrthographicCamera();
         guicam.setToOrtho(false, width, height);
         guicam.update();
+
 
         leftArrowKey = new Button(width - X_ARROW_WIDTH*2, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
         rightArrowKey = new Button(width - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
@@ -87,7 +92,7 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     public boolean touchDown(float x, float y, int pointer, int button) {
         guicam.unproject(touchPoint.set(x, y, 0));
 
-        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnLeftBorder()) {
             player.moveLeft();
             camera.position.x -= UNIT;
             camera.update();
@@ -99,12 +104,20 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
             player.moveUp();
             camera.position.y += UNIT;
             camera.update();
-        } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+        } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnBottomBorder()) {
             player.moveDown();
             camera.position.y -= UNIT;
             camera.update();
         }
         return false;
+    }
+
+    private boolean notOnLeftBorder() {
+        return (camera.position.x - screenUnitsWidth /2) > 0;
+    }
+
+    private boolean notOnBottomBorder() {
+        return (camera.position.y - screenUnitsHeight /2) > 0;
     }
 
     @Override
