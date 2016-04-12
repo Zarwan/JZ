@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Button {
-    private final int WIDTH;
-    private final int HEIGHT;
+    private final float WIDTH;
+    private final float HEIGHT;
     private Rectangle bounds;
     private Texture texture;
 
-    public Button(int x, int y, int width, int height, String imagePath) {
+    public Button(float x, float y, float width, float height, String imagePath) {
         WIDTH = width;
         HEIGHT = height;
         bounds = new Rectangle(x, y, width, height);
@@ -22,11 +22,11 @@ public class Button {
         return bounds.contains(x, y);
     }
 
-    public int getWidth() {
+    public float getWidth() {
         return WIDTH;
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return HEIGHT;
     }
 

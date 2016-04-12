@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -14,13 +15,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class JZ extends ApplicationAdapter implements GestureDetector.GestureListener {
-    private static final int X_ARROW_WIDTH = 150;
-    private static final int X_ARROW_HEIGHT = 113;
-    private static final int Y_ARROW_WIDTH = 113;
-    private static final int Y_ARROW_HEIGHT = 150;
-    private int width;
-    private int height;
-    private static final float UNIT = 32;
+    public static final float UNIT = 32;
+    private static final float X_ARROW_WIDTH = 150/UNIT;
+    private static final float X_ARROW_HEIGHT = 113/UNIT;
+    private static final float Y_ARROW_WIDTH = 113/UNIT;
+    private static final float Y_ARROW_HEIGHT = 150/UNIT;
+    private float width;
+    private float height;
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
@@ -32,31 +33,27 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private Button upArrowKey;
     private Button downArrowKey;
     private Player player;
-    private float screenUnitsWidth;
-    private float screenUnitsHeight;
 
     @Override
     public void create() {
-        width = Gdx.graphics.getWidth();
-        height = Gdx.graphics.getHeight();
 
         player = new Player(UNIT);
 
         spriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
 
+        tiledMap = new TmxMapLoader().load("water.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/UNIT);
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, width, height);
+        camera.setToOrtho(false, 30, 20);
         camera.update();
 
-        screenUnitsWidth = camera.position.x * 2;
-        screenUnitsHeight = camera.position.y * 2;
-
-        tiledMap = new TmxMapLoader().load("water.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        width = camera.viewportWidth;
+        height = camera.viewportHeight;
 
         guicam = new OrthographicCamera();
-        guicam.setToOrtho(false, width, height);
+        guicam.setToOrtho(false, 30, 20);
         guicam.update();
 
 
@@ -79,8 +76,10 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
+        spriteBatch.setProjectionMatrix(guicam.combined);
+
         spriteBatch.begin();
-        spriteBatch.draw(player.getTexture(), player.getX(), player.getY());
+        spriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
         spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
         spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
         spriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
@@ -94,30 +93,30 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
 
         if (leftArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnLeftBorder()) {
             player.moveLeft();
-            camera.position.x -= UNIT;
+            camera.position.x -= 1;
             camera.update();
         } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             player.moveRight();
-            camera.position.x += UNIT;
+            camera.position.x += 1;
             camera.update();
         } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             player.moveUp();
-            camera.position.y += UNIT;
+            camera.position.y += 1;
             camera.update();
         } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnBottomBorder()) {
             player.moveDown();
-            camera.position.y -= UNIT;
+            camera.position.y -= 1;
             camera.update();
         }
         return false;
     }
 
     private boolean notOnLeftBorder() {
-        return (camera.position.x - screenUnitsWidth /2) > 0;
+        return (camera.position.x - width /2) > 0;
     }
 
     private boolean notOnBottomBorder() {
-        return (camera.position.y - screenUnitsHeight /2) > 0;
+        return (camera.position.y - height /2) > 0;
     }
 
     @Override

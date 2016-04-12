@@ -2,17 +2,16 @@ package com.jzprojectz.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Player {
     private float x;
     private float y;
     private Texture texture;
-    private float unit;
 
     private static final String PLAYER_IMAGE = "pikachu.png";
 
-    public Player(float unit) {
-        this.unit = unit;
+    public Player() {
         texture = new Texture(Gdx.files.internal(PLAYER_IMAGE));
         x = 0;
         y = 0;
@@ -30,19 +29,27 @@ public class Player {
         return y;
     }
 
+    public float getWidth() {
+        return texture.getWidth()/JZ.UNIT;
+    }
+
+    public float getHeight() {
+        return texture.getHeight()/JZ.UNIT;
+    }
+
     public void moveRight() {
-        x += unit;
+        x += 1;
     }
 
     public void moveLeft() {
-        x -= unit;
+        x -= 1;
     }
 
     public void moveUp() {
-        y += unit;
+        y += 1;
     }
 
     public void moveDown() {
-        y -= unit;
+        y -= 1;
     }
 }
