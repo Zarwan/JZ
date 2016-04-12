@@ -20,8 +20,8 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private static final float X_ARROW_HEIGHT = 113/UNIT;
     private static final float Y_ARROW_WIDTH = 113/UNIT;
     private static final float Y_ARROW_HEIGHT = 150/UNIT;
-    private float width;
-    private float height;
+    private static final float SCREEN_WIDTH = 30;
+    private static final float SCREEN_HEIGHT = 20;
     private TiledMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
@@ -33,11 +33,13 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
     private Button upArrowKey;
     private Button downArrowKey;
     private Player player;
+    private int mapWidth;
+    private int mapHeight;
 
     @Override
     public void create() {
 
-        player = new Player(UNIT);
+        player = new Player();
 
         spriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
@@ -45,22 +47,23 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         tiledMap = new TmxMapLoader().load("water.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/UNIT);
 
+        MapProperties properties = tiledMap.getProperties();
+        mapWidth = properties.get("width", Integer.class);
+        mapHeight = properties.get("height", Integer.class);
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 30, 20);
+        camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         camera.update();
 
-        width = camera.viewportWidth;
-        height = camera.viewportHeight;
-
         guicam = new OrthographicCamera();
-        guicam.setToOrtho(false, 30, 20);
+        guicam.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         guicam.update();
 
 
-        leftArrowKey = new Button(width - X_ARROW_WIDTH*2, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
-        rightArrowKey = new Button(width - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
-        upArrowKey = new Button(width - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, Y_ARROW_HEIGHT + X_ARROW_HEIGHT, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "up_arrow.png");
-        downArrowKey = new Button(width - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, 0, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "down_arrow.png");
+        leftArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH*2, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
+        rightArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
+        upArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, Y_ARROW_HEIGHT + X_ARROW_HEIGHT, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "up_arrow.png");
+        downArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, 0, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "down_arrow.png");
 
 
         GestureDetector gestureDetector = new GestureDetector(this);
@@ -95,11 +98,11 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
             player.moveLeft();
             camera.position.x -= 1;
             camera.update();
-        } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+        } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnRightBorder()) {
             player.moveRight();
             camera.position.x += 1;
             camera.update();
-        } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+        } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnTopBorder()) {
             player.moveUp();
             camera.position.y += 1;
             camera.update();
@@ -111,12 +114,21 @@ public class JZ extends ApplicationAdapter implements GestureDetector.GestureLis
         return false;
     }
 
+
     private boolean notOnLeftBorder() {
-        return (camera.position.x - width /2) > 0;
+        return (camera.position.x - SCREEN_WIDTH/2) > 0;
+    }
+
+    private boolean notOnRightBorder() {
+        return (camera.position.x + SCREEN_WIDTH/2) < mapWidth;
     }
 
     private boolean notOnBottomBorder() {
-        return (camera.position.y - height /2) > 0;
+        return (camera.position.y - SCREEN_HEIGHT/2) > 0;
+    }
+
+    private boolean notOnTopBorder() {
+        return (camera.position.y + SCREEN_HEIGHT/2) < mapHeight;
     }
 
     @Override
