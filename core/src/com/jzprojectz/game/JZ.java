@@ -94,21 +94,25 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         switch (direction) {
             case NEUTRAL:
                 break;
+
             case LEFT:
                 camera.position.x -= 1;
                 player.moveLeft();
                 camera.update();
                 break;
             case RIGHT:
+
                 camera.position.x += 1;
                 player.moveRight();
                 camera.update();
                 break;
+
             case UP:
                 camera.position.y += 1;
                 player.moveUp();
                 camera.update();
                 break;
+
             case DOWN:
                 camera.position.y -= 1;
                 player.moveDown();
@@ -152,13 +156,11 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         guicam.unproject(touchPoint.set(screenX, screenY, 0));
 
-        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
-            direction = NEUTRAL;
-        } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y)) {
-            direction = NEUTRAL;
-        } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y)) {
-            direction = NEUTRAL;
-        } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y) ||
+                rightArrowKey.clicked(touchPoint.x, touchPoint.y) ||
+                upArrowKey.clicked(touchPoint.x, touchPoint.y) ||
+                downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
+
             direction = NEUTRAL;
         }
         return false;
