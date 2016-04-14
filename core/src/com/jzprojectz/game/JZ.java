@@ -15,22 +15,23 @@ import com.badlogic.gdx.math.Vector3;
 
 public class JZ extends ApplicationAdapter implements InputProcessor {
     public static final float UNIT = 32;
+    public static final int NEUTRAL = 0;
+    public static final int LEFT = 1;
+    public static final int RIGHT = 2;
+    public static final int UP = 3;
+    public static final int DOWN = 4;
     private static final float X_ARROW_WIDTH = 150/UNIT;
     private static final float X_ARROW_HEIGHT = 113/UNIT;
     private static final float Y_ARROW_WIDTH = 113/UNIT;
     private static final float Y_ARROW_HEIGHT = 150/UNIT;
     private static final float SCREEN_WIDTH = 30;
     private static final float SCREEN_HEIGHT = 20;
-    private static final int NEUTRAL = 0;
-    private static final int LEFT = 1;
-    private static final int RIGHT = 2;
-    private static final int UP = 3;
-    private static final int DOWN = 4;
     private TiledMap tiledMap;
-    private OrthographicCamera camera;
+    private OrthographicCamera mapCamera;
     private TiledMapRenderer tiledMapRenderer;
     private SpriteBatch spriteBatch;
-    private OrthographicCamera guicam;
+    private SpriteBatch playerSpriteBatch;
+    private OrthographicCamera staticCamera;
     private Vector3 touchPoint;
     private Button leftArrowKey;
     private Button rightArrowKey;
@@ -44,9 +45,10 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     @Override
     public void create() {
 
-        player = new Player();
+        player = new Player(this);
 
         spriteBatch = new SpriteBatch();
+        playerSpriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
 
         tiledMap = new TmxMapLoader().load("water.tmx");
@@ -56,13 +58,13 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         mapWidth = properties.get("width", Integer.class);
         mapHeight = properties.get("height", Integer.class);
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
-        camera.update();
+        mapCamera = new OrthographicCamera();
+        mapCamera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
+        mapCamera.update();
 
-        guicam = new OrthographicCamera();
-        guicam.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
-        guicam.update();
+        staticCamera = new OrthographicCamera();
+        staticCamera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
+        staticCamera.update();
 
         leftArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH*2, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
         rightArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
@@ -77,14 +79,18 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 1, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.update();
-        tiledMapRenderer.setView(camera);
+        mapCamera.update();
+        tiledMapRenderer.setView(mapCamera);
         tiledMapRenderer.render();
 
-        spriteBatch.setProjectionMatrix(guicam.combined);
+        spriteBatch.setProjectionMatrix(staticCamera.combined);
+        playerSpriteBatch.setProjectionMatrix(mapCamera.combined);
+
+        playerSpriteBatch.begin();
+        playerSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        playerSpriteBatch.end();
 
         spriteBatch.begin();
-        spriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
         spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
         spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
         spriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
@@ -96,27 +102,35 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 break;
 
             case LEFT:
-                camera.position.x -= 1;
-                player.moveLeft();
-                camera.update();
+                if (sideOfMapNotVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
+                    mapCamera.position.x -= 1;
+                }
+                player.move(direction);
+                mapCamera.update();
                 break;
-            case RIGHT:
 
-                camera.position.x += 1;
-                player.moveRight();
-                camera.update();
+            case RIGHT:
+                if (sideOfMapNotVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
+                    mapCamera.position.x += 1;
+                }
+                player.move(direction);
+                mapCamera.update();
                 break;
 
             case UP:
-                camera.position.y += 1;
-                player.moveUp();
-                camera.update();
+                if (sideOfMapNotVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
+                    mapCamera.position.y += 1;
+                }
+                player.move(direction);
+                mapCamera.update();
                 break;
 
             case DOWN:
-                camera.position.y -= 1;
-                player.moveDown();
-                camera.update();
+                if (sideOfMapNotVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
+                    mapCamera.position.y -= 1;
+                }
+                player.move(direction);
+                mapCamera.update();
                 break;
         }
     }
@@ -138,15 +152,15 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        guicam.unproject(touchPoint.set(screenX, screenY, 0));
+        staticCamera.unproject(touchPoint.set(screenX, screenY, 0));
 
-        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnLeftBorder()) {
+        if (leftArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             direction = LEFT;
-        } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnRightBorder()) {
+        } else if (rightArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             direction = RIGHT;
-        } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnTopBorder()) {
+        } else if (upArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             direction = UP;
-        } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y) && notOnBottomBorder()) {
+        } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             direction = DOWN;
         }
         return false;
@@ -154,7 +168,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        guicam.unproject(touchPoint.set(screenX, screenY, 0));
+        staticCamera.unproject(touchPoint.set(screenX, screenY, 0));
 
         if (leftArrowKey.clicked(touchPoint.x, touchPoint.y) ||
                 rightArrowKey.clicked(touchPoint.x, touchPoint.y) ||
@@ -166,20 +180,18 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         return false;
     }
 
-    private boolean notOnLeftBorder() {
-        return (camera.position.x - SCREEN_WIDTH/2) > 0;
-    }
-
-    private boolean notOnRightBorder() {
-        return (camera.position.x + SCREEN_WIDTH/2) < mapWidth;
-    }
-
-    private boolean notOnBottomBorder() {
-        return (camera.position.y - SCREEN_HEIGHT/2) > 0;
-    }
-
-    private boolean notOnTopBorder() {
-        return (camera.position.y + SCREEN_HEIGHT/2) < mapHeight;
+    public boolean sideOfMapNotVisible(int direction) {
+        switch (direction) {
+            case LEFT:
+                return mapCamera.position.x - SCREEN_WIDTH/2 > 0;
+            case RIGHT:
+                return mapCamera.position.x + SCREEN_WIDTH/2 < mapWidth;
+            case UP:
+                return mapCamera.position.y + SCREEN_HEIGHT/2 < mapHeight;
+            case DOWN:
+                return mapCamera.position.y - SCREEN_HEIGHT/2 > 0;
+        }
+        return true;
     }
 
     @Override
@@ -195,5 +207,13 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    public float getMapWidth() {
+        return mapWidth;
+    }
+
+    public float getMapHeight() {
+        return mapHeight;
     }
 }
