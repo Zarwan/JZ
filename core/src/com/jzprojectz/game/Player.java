@@ -1,5 +1,9 @@
 package com.jzprojectz.game;
 
+import static com.jzprojectz.game.JZ.LEFT;
+import static com.jzprojectz.game.JZ.RIGHT;
+import static com.jzprojectz.game.JZ.UP;
+import static com.jzprojectz.game.JZ.DOWN;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -38,37 +42,44 @@ public class Player {
         return texture.getHeight()/JZ.UNIT;
     }
 
-    public void move(int direction) {
-        if (!onEdge(direction)) {
+    public void moveLeft() {
+        if (!onEdge(LEFT)) {
             return;
         }
+        x -= 1;
+    }
 
-        switch (direction) {
-            case JZ.LEFT:
-                x -= 1;
-                break;
-            case JZ.RIGHT:
-                x += 1;
-                break;
-            case JZ.UP:
-                y += 1;
-                break;
-            case JZ.DOWN:
-                y -= 1;
-                break;
+    public void moveRight() {
+        if (!onEdge(RIGHT)) {
+            return;
         }
+        x += 1;
+    }
+
+    public void moveUp() {
+        if (!onEdge(UP)) {
+            return;
+        }
+        y += 1;
+    }
+
+    public void moveDown() {
+        if (!onEdge(DOWN)) {
+            return;
+        }
+        y -= 1;
     }
 
     private boolean onEdge(int direction) {
         switch (direction) {
-            case JZ.LEFT:
-                return !jz.sideOfMapVisible(JZ.LEFT) || x > 0;
-            case JZ.RIGHT:
-                return !jz.sideOfMapVisible(JZ.RIGHT) || x < jz.getMapWidth() - 2;
-            case JZ.UP:
-                return !jz.sideOfMapVisible(JZ.UP) || y < jz.getMapHeight() - 2;
-            case JZ.DOWN:
-                return !jz.sideOfMapVisible(JZ.DOWN) || y > 0;
+            case LEFT:
+                return !jz.sideOfMapVisible(LEFT) || x > 0;
+            case RIGHT:
+                return !jz.sideOfMapVisible(RIGHT) || x < jz.getMapWidth() - 2;
+            case UP:
+                return !jz.sideOfMapVisible(UP) || y < jz.getMapHeight() - 2;
+            case DOWN:
+                return !jz.sideOfMapVisible(DOWN) || y > 0;
         }
         return true;
     }
