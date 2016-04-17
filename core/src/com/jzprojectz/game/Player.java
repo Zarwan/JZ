@@ -1,11 +1,12 @@
 package com.jzprojectz.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+
 import static com.jzprojectz.game.JZ.LEFT;
 import static com.jzprojectz.game.JZ.RIGHT;
 import static com.jzprojectz.game.JZ.UP;
 import static com.jzprojectz.game.JZ.DOWN;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 
 public class Player {
     private JZ jz;

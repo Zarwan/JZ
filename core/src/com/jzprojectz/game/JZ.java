@@ -13,6 +13,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JZ extends ApplicationAdapter implements InputProcessor {
     public static final float UNIT = 32;
     public static final int NEUTRAL = 0;
@@ -31,8 +34,8 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private TiledMap tiledMap;
     private OrthographicCamera mapCamera;
     private TiledMapRenderer tiledMapRenderer;
-    private SpriteBatch spriteBatch;
-    private SpriteBatch playerSpriteBatch;
+    private SpriteBatch staticSpriteBatch;
+    private SpriteBatch mapSpriteBatch;
     private OrthographicCamera staticCamera;
     private Vector3 touchPoint;
     private Button leftArrowKey;
@@ -44,15 +47,17 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private int mapWidth;
     private int mapHeight;
     private int direction = NEUTRAL;
+    private int directionFacing = RIGHT;
     private int moveCount = 0;
+    private List<Bullet> bullets = new ArrayList<Bullet>();
 
     @Override
     public void create() {
 
         player = new Player(this);
 
-        spriteBatch = new SpriteBatch();
-        playerSpriteBatch = new SpriteBatch();
+        staticSpriteBatch = new SpriteBatch();
+        mapSpriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
 
         tiledMap = new TmxMapLoader().load("water.tmx");
@@ -88,25 +93,31 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         tiledMapRenderer.setView(mapCamera);
         tiledMapRenderer.render();
 
-        spriteBatch.setProjectionMatrix(staticCamera.combined);
-        playerSpriteBatch.setProjectionMatrix(mapCamera.combined);
+        staticSpriteBatch.setProjectionMatrix(staticCamera.combined);
+        mapSpriteBatch.setProjectionMatrix(mapCamera.combined);
 
-        playerSpriteBatch.begin();
-        playerSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        playerSpriteBatch.end();
+        mapSpriteBatch.begin();
+        mapSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
-        spriteBatch.begin();
-        spriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
-        spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
-        spriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
-        spriteBatch.draw(downArrowKey.getTexture(), downArrowKey.getXBound(), downArrowKey.getYBound(), downArrowKey.getWidth(), downArrowKey.getHeight());
-        spriteBatch.draw(shootButton.getTexture(), shootButton.getXBound(), shootButton.getYBound(), shootButton.getWidth(), shootButton.getHeight());
-        spriteBatch.end();
+        for (Bullet bullet : bullets) {
+            mapSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius(), bullet.getRadius());
+            bullet.moveBullet();
+        }
+        mapSpriteBatch.end();
+
+        staticSpriteBatch.begin();
+        staticSpriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
+        staticSpriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
+        staticSpriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
+        staticSpriteBatch.draw(downArrowKey.getTexture(), downArrowKey.getXBound(), downArrowKey.getYBound(), downArrowKey.getWidth(), downArrowKey.getHeight());
+        staticSpriteBatch.draw(shootButton.getTexture(), shootButton.getXBound(), shootButton.getYBound(), shootButton.getWidth(), shootButton.getHeight());
+        staticSpriteBatch.end();
 
 
         // Slows down player movement
         if (direction != NEUTRAL) {
             moveCount++;
+            directionFacing = direction;
         } else {
             return;
         }
@@ -177,7 +188,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             direction = DOWN;
         } else if (shootButton.clicked(touchPoint.x, touchPoint.y)) {
-            System.out.println("ferret");
+            bullets.add(new Bullet(player.getX(), player.getY(), directionFacing));
         }
         return false;
     }
