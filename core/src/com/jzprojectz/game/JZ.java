@@ -24,6 +24,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private static final float X_ARROW_HEIGHT = 113/UNIT;
     private static final float Y_ARROW_WIDTH = 113/UNIT;
     private static final float Y_ARROW_HEIGHT = 150/UNIT;
+    private static final float SHOOT_BUTTON_DIMEN = 80/UNIT;
     private static final float SCREEN_WIDTH = 30;
     private static final float SCREEN_HEIGHT = 20;
     private static final int MAX_MOVE_COUNT = 4;
@@ -38,6 +39,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private Button rightArrowKey;
     private Button upArrowKey;
     private Button downArrowKey;
+    private Button shootButton;
     private Player player;
     private int mapWidth;
     private int mapHeight;
@@ -72,6 +74,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         rightArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
         upArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, Y_ARROW_HEIGHT + X_ARROW_HEIGHT, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "up_arrow.png");
         downArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, 0, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "down_arrow.png");
+        shootButton = new Button(SHOOT_BUTTON_DIMEN, SHOOT_BUTTON_DIMEN, SHOOT_BUTTON_DIMEN, SHOOT_BUTTON_DIMEN, "red_button.png");
 
         Gdx.input.setInputProcessor(this);
     }
@@ -97,6 +100,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         spriteBatch.draw(rightArrowKey.getTexture(), rightArrowKey.getXBound(), rightArrowKey.getYBound(), rightArrowKey.getWidth(), rightArrowKey.getHeight());
         spriteBatch.draw(upArrowKey.getTexture(), upArrowKey.getXBound(), upArrowKey.getYBound(), upArrowKey.getWidth(), upArrowKey.getHeight());
         spriteBatch.draw(downArrowKey.getTexture(), downArrowKey.getXBound(), downArrowKey.getYBound(), downArrowKey.getWidth(), downArrowKey.getHeight());
+        spriteBatch.draw(shootButton.getTexture(), shootButton.getXBound(), shootButton.getYBound(), shootButton.getWidth(), shootButton.getHeight());
         spriteBatch.end();
 
 
