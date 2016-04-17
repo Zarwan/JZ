@@ -39,7 +39,7 @@ public class Player {
     }
 
     public void move(int direction) {
-        if (!notOnEdge(direction)) {
+        if (!onEdge(direction)) {
             return;
         }
         switch (direction) {
@@ -58,16 +58,16 @@ public class Player {
         }
     }
 
-    private boolean notOnEdge(int direction) {
+    private boolean onEdge(int direction) {
         switch (direction) {
             case JZ.LEFT:
-                return jz.sideOfMapNotVisible(JZ.LEFT) || x > 0;
+                return !jz.sideOfMapVisible(JZ.LEFT) || x > 0;
             case JZ.RIGHT:
-                return jz.sideOfMapNotVisible(JZ.RIGHT) || x < jz.getMapWidth() - 2;
+                return !jz.sideOfMapVisible(JZ.RIGHT) || x < jz.getMapWidth() - 2;
             case JZ.UP:
-                return jz.sideOfMapNotVisible(JZ.UP) || y < jz.getMapHeight() - 2;
+                return !jz.sideOfMapVisible(JZ.UP) || y < jz.getMapHeight() - 2;
             case JZ.DOWN:
-                return jz.sideOfMapNotVisible(JZ.DOWN) || y > 0;
+                return !jz.sideOfMapVisible(JZ.DOWN) || y > 0;
         }
         return true;
     }

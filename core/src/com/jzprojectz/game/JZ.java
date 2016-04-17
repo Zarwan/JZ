@@ -102,7 +102,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 break;
 
             case LEFT:
-                if (sideOfMapNotVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
+                if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
                     mapCamera.position.x -= 1;
                 }
                 player.move(direction);
@@ -110,7 +110,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 break;
 
             case RIGHT:
-                if (sideOfMapNotVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
+                if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
                     mapCamera.position.x += 1;
                 }
                 player.move(direction);
@@ -118,7 +118,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 break;
 
             case UP:
-                if (sideOfMapNotVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
+                if (!sideOfMapVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
                     mapCamera.position.y += 1;
                 }
                 player.move(direction);
@@ -126,7 +126,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 break;
 
             case DOWN:
-                if (sideOfMapNotVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
+                if (!sideOfMapVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
                     mapCamera.position.y -= 1;
                 }
                 player.move(direction);
@@ -180,16 +180,16 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         return false;
     }
 
-    public boolean sideOfMapNotVisible(int direction) {
+    public boolean sideOfMapVisible(int direction) {
         switch (direction) {
             case LEFT:
-                return mapCamera.position.x - SCREEN_WIDTH/2 > 0;
+                return mapCamera.position.x - SCREEN_WIDTH/2 <= 0;
             case RIGHT:
-                return mapCamera.position.x + SCREEN_WIDTH/2 < mapWidth;
+                return mapCamera.position.x + SCREEN_WIDTH/2 >= mapWidth;
             case UP:
-                return mapCamera.position.y + SCREEN_HEIGHT/2 < mapHeight;
+                return mapCamera.position.y + SCREEN_HEIGHT/2 >= mapHeight;
             case DOWN:
-                return mapCamera.position.y - SCREEN_HEIGHT/2 > 0;
+                return mapCamera.position.y - SCREEN_HEIGHT/2 <= 0;
         }
         return true;
     }
