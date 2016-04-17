@@ -47,28 +47,28 @@ public class Player {
         if (!onEdge(LEFT)) {
             return;
         }
-        x -= 1;
+        x--;
     }
 
     public void moveRight() {
         if (!onEdge(RIGHT)) {
             return;
         }
-        x += 1;
+        x++;
     }
 
     public void moveUp() {
         if (!onEdge(UP)) {
             return;
         }
-        y += 1;
+        y++;
     }
 
     public void moveDown() {
         if (!onEdge(DOWN)) {
             return;
         }
-        y -= 1;
+        y--;
     }
 
     private boolean onEdge(int direction) {

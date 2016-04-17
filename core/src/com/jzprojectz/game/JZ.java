@@ -131,28 +131,28 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         switch (direction) {
             case LEFT:
                 if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
-                    mapCamera.position.x -= 1;
+                    mapCamera.position.x--;
                 }
                 player.moveLeft();
                 break;
 
             case RIGHT:
                 if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
-                    mapCamera.position.x += 1;
+                    mapCamera.position.x++;
                 }
                 player.moveRight();
                 break;
 
             case UP:
                 if (!sideOfMapVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
-                    mapCamera.position.y += 1;
+                    mapCamera.position.y++;
                 }
                 player.moveUp();
                 break;
 
             case DOWN:
                 if (!sideOfMapVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
-                    mapCamera.position.y -= 1;
+                    mapCamera.position.y--;
                 }
                 player.moveDown();
                 break;
