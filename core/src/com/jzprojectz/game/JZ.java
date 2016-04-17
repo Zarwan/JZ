@@ -24,7 +24,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private static final float X_ARROW_HEIGHT = 113/UNIT;
     private static final float Y_ARROW_WIDTH = 113/UNIT;
     private static final float Y_ARROW_HEIGHT = 150/UNIT;
-    private static final float SHOOT_BUTTON_DIMEN = 80/UNIT;
+    private static final float SHOOT_BUTTON_RADIUS = 80/UNIT;
     private static final float SCREEN_WIDTH = 30;
     private static final float SCREEN_HEIGHT = 20;
     private static final int MAX_MOVE_COUNT = 4;
@@ -74,7 +74,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         rightArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
         upArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, Y_ARROW_HEIGHT + X_ARROW_HEIGHT, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "up_arrow.png");
         downArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, 0, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "down_arrow.png");
-        shootButton = new Button(SHOOT_BUTTON_DIMEN, SHOOT_BUTTON_DIMEN, SHOOT_BUTTON_DIMEN, SHOOT_BUTTON_DIMEN, "red_button.png");
+        shootButton = new Button(SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, "red_button.png");
 
         Gdx.input.setInputProcessor(this);
     }
@@ -176,6 +176,8 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
             direction = UP;
         } else if (downArrowKey.clicked(touchPoint.x, touchPoint.y)) {
             direction = DOWN;
+        } else if (shootButton.clicked(touchPoint.x, touchPoint.y)) {
+            System.out.println("ferret");
         }
         return false;
     }
