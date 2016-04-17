@@ -42,6 +42,7 @@ public class Player {
         if (!onEdge(direction)) {
             return;
         }
+
         switch (direction) {
             case JZ.LEFT:
                 x -= 1;

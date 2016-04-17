@@ -26,6 +26,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private static final float Y_ARROW_HEIGHT = 150/UNIT;
     private static final float SCREEN_WIDTH = 30;
     private static final float SCREEN_HEIGHT = 20;
+    private static final int MAX_MOVE_COUNT = 4;
     private TiledMap tiledMap;
     private OrthographicCamera mapCamera;
     private TiledMapRenderer tiledMapRenderer;
@@ -41,6 +42,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private int mapWidth;
     private int mapHeight;
     private int direction = NEUTRAL;
+    private int moveCount = 0;
 
     @Override
     public void create() {
@@ -97,10 +99,21 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         spriteBatch.draw(downArrowKey.getTexture(), downArrowKey.getXBound(), downArrowKey.getYBound(), downArrowKey.getWidth(), downArrowKey.getHeight());
         spriteBatch.end();
 
-        switch (direction) {
-            case NEUTRAL:
-                break;
 
+        // Slows down player movement
+        if (direction != NEUTRAL) {
+            moveCount++;
+        } else {
+            return;
+        }
+
+        if (moveCount == MAX_MOVE_COUNT) {
+            moveCount = 0;
+        } else {
+            return;
+        }
+
+        switch (direction) {
             case LEFT:
                 if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
                     mapCamera.position.x -= 1;
