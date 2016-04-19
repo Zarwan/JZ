@@ -35,7 +35,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private OrthographicCamera mapCamera;
     private TiledMapRenderer tiledMapRenderer;
     private SpriteBatch staticSpriteBatch;
-    private SpriteBatch mapSpriteBatch;
+    private SpriteBatch dynamicSpriteBatch;
     private OrthographicCamera staticCamera;
     private Vector3 touchPoint;
     private Button leftArrowKey;
@@ -57,7 +57,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         player = new Player(this);
 
         staticSpriteBatch = new SpriteBatch();
-        mapSpriteBatch = new SpriteBatch();
+        dynamicSpriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
 
         tiledMap = new TmxMapLoader().load("water.tmx");
@@ -94,16 +94,16 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         tiledMapRenderer.render();
 
         staticSpriteBatch.setProjectionMatrix(staticCamera.combined);
-        mapSpriteBatch.setProjectionMatrix(mapCamera.combined);
+        dynamicSpriteBatch.setProjectionMatrix(mapCamera.combined);
 
-        mapSpriteBatch.begin();
-        mapSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        dynamicSpriteBatch.begin();
+        dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
         for (Bullet bullet : bullets) {
-            mapSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius(), bullet.getRadius());
+            dynamicSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius(), bullet.getRadius());
             bullet.moveBullet();
         }
-        mapSpriteBatch.end();
+        dynamicSpriteBatch.end();
 
         staticSpriteBatch.begin();
         staticSpriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());
