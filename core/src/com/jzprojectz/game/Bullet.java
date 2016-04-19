@@ -11,12 +11,13 @@ import static com.jzprojectz.game.JZ.UP;
 import static com.jzprojectz.game.JZ.DOWN;
 
 public class Bullet {
-    private final float RADIUS = 30/UNIT;
+    private final float RADIUS = 32/UNIT;
     private final String IMAGE = "black_circle.png";
     private Circle bounds;
     private Texture texture = new Texture(Gdx.files.internal(IMAGE));
     private float x;
     private float y;
+    private int moveCountdown = 20;
     private int direction;
 
     public Bullet(float x, float y, int direction) {
@@ -28,10 +29,6 @@ public class Bullet {
 
     public boolean collision(float x, float y) {
         return bounds.contains(x, y);
-    }
-
-    public float getX() {
-        return x;
     }
 
     public void moveBullet() {
@@ -53,6 +50,11 @@ public class Bullet {
                 break;
         }
         bounds = new Circle(x, y, RADIUS);
+        moveCountdown--;
+    }
+
+    public float getX() {
+        return x;
     }
 
     public float getY() {
@@ -67,4 +69,7 @@ public class Bullet {
         return texture;
     }
 
+    public boolean isDead() {
+        return moveCountdown <= 0;
+    }
 }

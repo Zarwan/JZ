@@ -89,7 +89,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 1, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        mapCamera.update();
+
         tiledMapRenderer.setView(mapCamera);
         tiledMapRenderer.render();
 
@@ -99,7 +99,15 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         dynamicSpriteBatch.begin();
         dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
-        for (Bullet bullet : bullets) {
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet bullet = bullets.get(i);
+
+            if (bullet.isDead()) {
+                bullets.remove(i);
+                i--;
+                continue;
+            }
+
             dynamicSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius(), bullet.getRadius());
             bullet.moveBullet();
         }
