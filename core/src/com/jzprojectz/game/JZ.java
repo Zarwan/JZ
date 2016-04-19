@@ -23,11 +23,9 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     public static final int RIGHT = 2;
     public static final int UP = 3;
     public static final int DOWN = 4;
-    private static final float X_ARROW_WIDTH = 150/UNIT;
-    private static final float X_ARROW_HEIGHT = 113/UNIT;
-    private static final float Y_ARROW_WIDTH = 113/UNIT;
-    private static final float Y_ARROW_HEIGHT = 150/UNIT;
-    private static final float SHOOT_BUTTON_RADIUS = 80/UNIT;
+    private static final float ARROW_WIDTH = 3;
+    private static final float ARROW_HEIGHT = 3;
+    private static final float SHOOT_BUTTON_RADIUS = 3;
     private static final float SCREEN_WIDTH = 30;
     private static final float SCREEN_HEIGHT = 20;
     private static final int MAX_MOVE_COUNT = 4;
@@ -60,7 +58,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         dynamicSpriteBatch = new SpriteBatch();
         touchPoint = new Vector3();
 
-        tiledMap = new TmxMapLoader().load("water.tmx");
+        tiledMap = new TmxMapLoader().load("map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/UNIT);
 
         MapProperties properties = tiledMap.getProperties();
@@ -75,11 +73,11 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         staticCamera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         staticCamera.update();
 
-        leftArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH*2, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "left_arrow.png");
-        rightArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH, Y_ARROW_HEIGHT, X_ARROW_WIDTH, X_ARROW_HEIGHT, "right_arrow.png");
-        upArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, Y_ARROW_HEIGHT + X_ARROW_HEIGHT, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "up_arrow.png");
-        downArrowKey = new Button(SCREEN_WIDTH - X_ARROW_WIDTH - Y_ARROW_WIDTH/2, 0, Y_ARROW_WIDTH, Y_ARROW_HEIGHT, "down_arrow.png");
-        shootButton = new Button(SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, "red_button.png");
+        leftArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*3, ARROW_HEIGHT, ARROW_WIDTH, ARROW_HEIGHT, "left_arrow.png");
+        rightArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH, ARROW_HEIGHT, ARROW_WIDTH, ARROW_HEIGHT, "right_arrow.png");
+        upArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*2, ARROW_HEIGHT + ARROW_HEIGHT, ARROW_WIDTH, ARROW_HEIGHT, "up_arrow.png");
+        downArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*2, 0, ARROW_WIDTH, ARROW_HEIGHT, "down_arrow.png");
+        shootButton = new Button(SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, "shooting_button.png");
 
         Gdx.input.setInputProcessor(this);
     }
@@ -97,7 +95,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         dynamicSpriteBatch.setProjectionMatrix(mapCamera.combined);
 
         dynamicSpriteBatch.begin();
-        dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), 3, 3); //tmp
 
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);

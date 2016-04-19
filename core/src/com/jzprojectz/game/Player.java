@@ -14,13 +14,13 @@ public class Player {
     private float y;
     private Texture texture;
 
-    private static final String PLAYER_IMAGE = "pikachu.png";
+    private static final String PLAYER_IMAGE = "player.png";
 
     public Player(JZ jz) {
         this.jz = jz;
         texture = new Texture(Gdx.files.internal(PLAYER_IMAGE));
-        x = 0;
-        y = 0;
+        x = 6;
+        y = 4;
     }
 
     public Texture getTexture() {
