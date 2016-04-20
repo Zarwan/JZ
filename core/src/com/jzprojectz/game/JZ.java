@@ -42,6 +42,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private Button downArrowKey;
     private Button shootButton;
     private Player player;
+    private Enemy enemy;
     private int mapWidth;
     private int mapHeight;
     private int direction = NEUTRAL;
@@ -53,6 +54,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     public void create() {
 
         player = new Player(this);
+        enemy = new Enemy(this);
 
         staticSpriteBatch = new SpriteBatch();
         dynamicSpriteBatch = new SpriteBatch();
@@ -95,7 +97,8 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         dynamicSpriteBatch.setProjectionMatrix(mapCamera.combined);
 
         dynamicSpriteBatch.begin();
-        dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), 3, 3); //tmp
+        dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        dynamicSpriteBatch.draw(enemy.getTexture(), enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
 
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
@@ -119,6 +122,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         staticSpriteBatch.draw(shootButton.getTexture(), shootButton.getXBound(), shootButton.getYBound(), shootButton.getWidth(), shootButton.getHeight());
         staticSpriteBatch.end();
 
+        enemy.follow(player);
 
         // Slows down player movement
         if (direction != NEUTRAL) {

@@ -8,7 +8,7 @@ import static com.jzprojectz.game.JZ.RIGHT;
 import static com.jzprojectz.game.JZ.UP;
 import static com.jzprojectz.game.JZ.DOWN;
 
-public class Player {
+public class Enemy {
     private final float WIDTH = 2;
     private final float HEIGHT = 2;
     private JZ jz;
@@ -16,12 +16,12 @@ public class Player {
     private float y;
     private Texture texture;
 
-    private static final String PLAYER_IMAGE = "player.png";
+    private static final String ENEMY_IMAGE = "handsome.png";
 
-    public Player(JZ jz) {
+    public Enemy(JZ jz) {
         this.jz = jz;
-        texture = new Texture(Gdx.files.internal(PLAYER_IMAGE));
-        x = 6;
+        texture = new Texture(Gdx.files.internal(ENEMY_IMAGE));
+        x = 40;
         y = 4;
     }
 
@@ -43,6 +43,20 @@ public class Player {
 
     public float getHeight() {
         return HEIGHT;
+    }
+
+    public void follow(Player player) {
+        if (x + WIDTH < player.getX()) {
+            moveRight();
+        } else if (x > player.getX() + player.getWidth()) {
+            moveLeft();
+        }
+
+        if (y + HEIGHT < player.getY()) {
+            moveUp();
+        } else if (y > player.getY() + player.getHeight()) {
+            moveDown();
+        }
     }
 
     public void moveLeft() {
