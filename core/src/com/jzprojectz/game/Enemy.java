@@ -22,7 +22,7 @@ public class Enemy {
         this.jz = jz;
         texture = new Texture(Gdx.files.internal(ENEMY_IMAGE));
         x = 40;
-        y = 4;
+        y = 25;
     }
 
     public Texture getTexture() {
@@ -52,9 +52,9 @@ public class Enemy {
             moveLeft();
         }
 
-        if (y + HEIGHT < player.getY()) {
+        if (y < player.getY()) {
             moveUp();
-        } else if (y > player.getY() + player.getHeight()) {
+        } else if (y > player.getY()) {
             moveDown();
         }
     }
