@@ -6,6 +6,7 @@ package com.jzprojectz.game;
 public class Squidward extends Enemy {
     private final int WIDTH = 2;
     private final int HEIGHT = 2;
+    private final int BOUNTY = 1;
     private final double DAMAGE = 0.01;
     private double speed = 3;
     private int health = 3;
@@ -43,6 +44,11 @@ public class Squidward extends Enemy {
     @Override
     public int getHeight() {
         return HEIGHT;
+    }
+
+    @Override
+    public int getBounty() {
+        return BOUNTY;
     }
 
     @Override

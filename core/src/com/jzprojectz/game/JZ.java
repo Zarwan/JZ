@@ -6,7 +6,11 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -17,6 +21,8 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sun.font.TrueTypeFont;
 
 public class JZ extends ApplicationAdapter implements InputProcessor {
     public static final float UNIT = 32;
@@ -37,6 +43,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private TiledMapRenderer tiledMapRenderer;
     private SpriteBatch staticSpriteBatch;
     private SpriteBatch dynamicSpriteBatch;
+    private SpriteBatch fontBatch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera staticCamera;
     private Vector3 touchPoint;
@@ -51,6 +58,8 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private int direction = NEUTRAL;
     private int directionFacing = RIGHT;
     private int numEnemies = 25;
+    private int score = 0;
+    private BitmapFont bitmapFont;
     private List<Bullet> bullets = new ArrayList<Bullet>();
     private List<Enemy> enemies = new ArrayList<Enemy>();
 
@@ -61,8 +70,11 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
         staticSpriteBatch = new SpriteBatch();
         dynamicSpriteBatch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
+        fontBatch = new SpriteBatch();
         touchPoint = new Vector3();
+
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setColor(Color.BLACK);
 
         tiledMap = new TmxMapLoader().load("map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/UNIT);
@@ -84,6 +96,13 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         upArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*2, ARROW_HEIGHT + ARROW_HEIGHT, ARROW_WIDTH, ARROW_HEIGHT, "up_arrow.png");
         downArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*2, 0, ARROW_WIDTH, ARROW_HEIGHT, "down_arrow.png");
         shootButton = new Button(SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, "shooting_button.png");
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("droid_sans_mono.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 25;
+        parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
+        bitmapFont = generator.generateFont(parameter);
+        generator.dispose();
 
         for (int i = 0; i < 10 && numEnemies > 0; i++) {
             enemies.add(new Squidward(this));
@@ -118,7 +137,6 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         }
         dynamicSpriteBatch.end();
 
-        shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
@@ -138,6 +156,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
                     if (enemy.isDead()) {
                         enemies.remove(j);
+                        score += enemy.getBounty();
                         if (numEnemies > 0) {
                             enemies.add(new Squidward(this));
                             numEnemies--;
@@ -161,6 +180,11 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         staticSpriteBatch.draw(downArrowKey.getTexture(), downArrowKey.getXBound(), downArrowKey.getYBound(), downArrowKey.getWidth(), downArrowKey.getHeight());
         staticSpriteBatch.draw(shootButton.getTexture(), shootButton.getXBound(), shootButton.getYBound(), shootButton.getWidth(), shootButton.getHeight());
         staticSpriteBatch.end();
+
+        fontBatch.begin();
+        bitmapFont.getData().setScale(2f);
+        bitmapFont.draw(fontBatch, "Score: " + score, 0, Gdx.graphics.getHeight());
+        fontBatch.end();
 
         for (Enemy enemy : enemies) {
             enemy.followAndAttack(player);
