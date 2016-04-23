@@ -30,7 +30,6 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private static final float SHOOT_BUTTON_RADIUS = 3;
     private static final float SCREEN_WIDTH = 30;
     private static final float SCREEN_HEIGHT = 20;
-    private static final int MAX_MOVE_COUNT = 4;
     private TiledMap tiledMap;
     private OrthographicCamera mapCamera;
     private TiledMapRenderer tiledMapRenderer;
@@ -45,19 +44,19 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private Button downArrowKey;
     private Button shootButton;
     private Player player;
-    private Enemy enemy;
     private int mapWidth;
     private int mapHeight;
     private int direction = NEUTRAL;
     private int directionFacing = RIGHT;
     private int moveCount = 0;
     private List<Bullet> bullets = new ArrayList<Bullet>();
+    private List<Enemy> enemies = new ArrayList<Enemy>();
 
     @Override
     public void create() {
 
         player = new Player(this);
-        enemy = new Enemy(this);
+        enemies.add(new Squidward(this));
 
         staticSpriteBatch = new SpriteBatch();
         dynamicSpriteBatch = new SpriteBatch();
@@ -90,9 +89,13 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 1, 0, 1);
+        Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (player.isDead()) {
+            return;
+        }
 
         tiledMapRenderer.setView(mapCamera);
         tiledMapRenderer.render();
@@ -103,7 +106,10 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
         dynamicSpriteBatch.begin();
         dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        dynamicSpriteBatch.draw(enemy.getTexture(), enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+
+        for (Enemy enemy : enemies) {
+            dynamicSpriteBatch.draw(enemy.getTexture(), enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+        }
         dynamicSpriteBatch.end();
 
         shapeRenderer.setColor(Color.BLACK);
@@ -118,11 +124,21 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
             }
 
             shapeRenderer.circle(bullet.getX(), bullet.getY(), bullet.getRadius(), 12);
-            if (bullet.collision(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
-                enemy.shot();
-                bullets.remove(i);
-                i--;
-            } else {
+
+            for (int j = 0; j < enemies.size(); j++) {
+                Enemy enemy = enemies.get(j);
+                if (bullet.collision(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
+                    enemy.shot();
+
+                    if (enemy.isDead()) {
+                        enemies.remove(j);
+                        j--;
+                    }
+                    bullets.remove(i);
+                    i--;
+                }
+            }
+            if (bullets.contains(bullet)) {
                 bullet.moveBullet();
             }
         }
@@ -136,7 +152,9 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         staticSpriteBatch.draw(shootButton.getTexture(), shootButton.getXBound(), shootButton.getYBound(), shootButton.getWidth(), shootButton.getHeight());
         staticSpriteBatch.end();
 
-        enemy.follow(player);
+        for (Enemy enemy : enemies) {
+            enemy.followAndAttack(player);
+        }
 
         if (direction != NEUTRAL) {
             directionFacing = direction;

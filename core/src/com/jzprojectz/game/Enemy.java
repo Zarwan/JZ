@@ -11,12 +11,13 @@ import static com.jzprojectz.game.JZ.DOWN;
 public class Enemy {
     private final float WIDTH = 2;
     private final float HEIGHT = 2;
+    private final double DAMAGE = 0.05;
     private JZ jz;
     private float x;
     private float y;
     private Texture texture;
     private float speed = 3;
-    private int health = 10;
+    private int health = 3;
 
     private static final String ENEMY_IMAGE = "handsome.png";
 
@@ -51,7 +52,7 @@ public class Enemy {
         health--;
     }
 
-    public void follow(Player player) {
+    public void followAndAttack(Player player) {
 
         //Enemy is in one of the corners of the player sprite
         if (Math.abs(y - (player.getY() + player.getHeight())) <= getDistance() ||
@@ -61,21 +62,35 @@ public class Enemy {
                 moveRight();
             } else if (x - player.getX() >= getDistance()) {
                 moveLeft();
+            } else {
+                attackPlayer(player);
             }
 
         } else {
+            boolean movedX = true;
+
             if (player.getX() - (x + WIDTH) >= getDistance()) {
                 moveRight();
             } else if (x - (player.getX() + player.getWidth()) >= getDistance()) {
                 moveLeft();
+            } else {
+                movedX = false;
             }
 
             if (player.getY() - (y + HEIGHT) > getDistance()) {
                 moveUp();
             } else if (y - (player.getY() + player.getHeight()) > getDistance()) {
                 moveDown();
+            } else {
+                if (!movedX) {
+                    attackPlayer(player);
+                }
             }
         }
+    }
+
+    private void attackPlayer(Player player) {
+        player.attacked(getDamage());
     }
 
     public void moveLeft() {
@@ -106,6 +121,10 @@ public class Enemy {
         y -= getDistance();
     }
 
+    public boolean isDead() {
+        return health <= 0;
+    }
+
     private boolean onEdge(int direction) {
         switch (direction) {
             case LEFT:
@@ -122,5 +141,9 @@ public class Enemy {
 
     private float getDistance() {
         return speed * Gdx.graphics.getDeltaTime();
+    }
+
+    protected double getDamage() {
+        return DAMAGE;
     }
 }

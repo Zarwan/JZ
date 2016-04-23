@@ -16,6 +16,7 @@ public class Player {
     private float y;
     private Texture texture;
     private float speed = 12;
+    private int health = 1000;
 
     private static final String PLAYER_IMAGE = "player.png";
 
@@ -46,6 +47,10 @@ public class Player {
         return HEIGHT;
     }
 
+    public void attacked(double damage) {
+        health -= damage;
+    }
+
     public void moveLeft() {
         if (!onEdge(LEFT)) {
             return;
@@ -72,6 +77,10 @@ public class Player {
             return;
         }
         y -= getDistance();
+    }
+
+    public boolean isDead() {
+        return health <= 0;
     }
 
     private boolean onEdge(int direction) {
