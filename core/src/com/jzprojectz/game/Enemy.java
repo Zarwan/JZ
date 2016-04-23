@@ -53,6 +53,7 @@ public class Enemy {
 
     public void follow(Player player) {
 
+        //Enemy is in one of the corners of the player sprite
         if (Math.abs(y - (player.getY() + player.getHeight())) <= getDistance() ||
                 Math.abs(player.getY() - (y + HEIGHT)) <= getDistance()) {
 
