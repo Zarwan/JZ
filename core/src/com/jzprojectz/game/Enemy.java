@@ -52,16 +52,28 @@ public class Enemy {
     }
 
     public void follow(Player player) {
-        if (player.getX() - (x + WIDTH) > getDistance()) {
-            moveRight();
-        } else if (x - (player.getX() + player.getWidth()) > getDistance()) {
-            moveLeft();
-        }
 
-        if (player.getY() - y > getDistance()) {
-            moveUp();
-        } else if (y - player.getY() > getDistance()) {
-            moveDown();
+        if (Math.abs(y - (player.getY() + player.getHeight())) <= getDistance() ||
+                Math.abs(player.getY() - (y + HEIGHT)) <= getDistance()) {
+
+            if (player.getX() - x >= getDistance()) {
+                moveRight();
+            } else if (x - player.getX() >= getDistance()) {
+                moveLeft();
+            }
+
+        } else {
+            if (player.getX() - (x + WIDTH) >= getDistance()) {
+                moveRight();
+            } else if (x - (player.getX() + player.getWidth()) >= getDistance()) {
+                moveLeft();
+            }
+
+            if (player.getY() - (y + HEIGHT) > getDistance()) {
+                moveUp();
+            } else if (y - (player.getY() + player.getHeight()) > getDistance()) {
+                moveDown();
+            }
         }
     }
 
