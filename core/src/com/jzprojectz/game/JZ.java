@@ -3,9 +3,11 @@ package com.jzprojectz.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -34,6 +36,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private TiledMapRenderer tiledMapRenderer;
     private SpriteBatch staticSpriteBatch;
     private SpriteBatch dynamicSpriteBatch;
+    private ShapeRenderer shapeRenderer;
     private OrthographicCamera staticCamera;
     private Vector3 touchPoint;
     private Button leftArrowKey;
@@ -58,6 +61,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
         staticSpriteBatch = new SpriteBatch();
         dynamicSpriteBatch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
         touchPoint = new Vector3();
 
         tiledMap = new TmxMapLoader().load("map.tmx");
@@ -95,11 +99,15 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
         staticSpriteBatch.setProjectionMatrix(staticCamera.combined);
         dynamicSpriteBatch.setProjectionMatrix(mapCamera.combined);
+        shapeRenderer.setProjectionMatrix(mapCamera.combined);
 
         dynamicSpriteBatch.begin();
         dynamicSpriteBatch.draw(player.getTexture(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
         dynamicSpriteBatch.draw(enemy.getTexture(), enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+        dynamicSpriteBatch.end();
 
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
 
@@ -109,7 +117,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 continue;
             }
 
-            dynamicSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius()*2, bullet.getRadius()*2);
+            shapeRenderer.circle(bullet.getX(), bullet.getY(), bullet.getRadius(), 10);
             if (bullet.collision(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
                 enemy.shot();
                 bullets.remove(i);
@@ -118,7 +126,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 bullet.moveBullet();
             }
         }
-        dynamicSpriteBatch.end();
+        shapeRenderer.end();
 
         staticSpriteBatch.begin();
         staticSpriteBatch.draw(leftArrowKey.getTexture(), leftArrowKey.getXBound(), leftArrowKey.getYBound(), leftArrowKey.getWidth(), leftArrowKey.getHeight());

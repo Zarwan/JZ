@@ -14,13 +14,11 @@ import static com.jzprojectz.game.JZ.DOWN;
 
 public class Bullet {
     private final float RADIUS = 16/UNIT;
-    private final String IMAGE = "black_circle.png";
     private Circle bounds;
     //private Rectangle bounds;
-    private Texture texture = new Texture(Gdx.files.internal(IMAGE));
     private float x;
     private float y;
-    private int moveCountdown = 20;
+    private float distance = 20;
     private int direction;
     private float speed = 20;
 
@@ -81,7 +79,7 @@ public class Bullet {
         }
         //bounds = new Rectangle(x, y, RADIUS, RADIUS);
         bounds = new Circle(x, y, RADIUS);
-        moveCountdown--;
+        distance -= getDistance();
     }
 
     public float getX() {
@@ -96,12 +94,8 @@ public class Bullet {
         return RADIUS;
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
-
     public boolean isDead() {
-        return moveCountdown <= 0;
+        return distance <= 0;
     }
 
     private float getDistance() {
