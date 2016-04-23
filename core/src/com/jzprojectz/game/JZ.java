@@ -109,8 +109,14 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 continue;
             }
 
-            dynamicSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius(), bullet.getRadius());
-            bullet.moveBullet();
+            dynamicSpriteBatch.draw(bullet.getTexture(), bullet.getX(), bullet.getY(), bullet.getRadius()*2, bullet.getRadius()*2);
+            if (bullet.collision(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
+                enemy.shot();
+                bullets.remove(i);
+                i--;
+            } else {
+                bullet.moveBullet();
+            }
         }
         dynamicSpriteBatch.end();
 
@@ -124,45 +130,37 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
         enemy.follow(player);
 
-        // Slows down player movement
         if (direction != NEUTRAL) {
-            moveCount++;
             directionFacing = direction;
-        } else {
-            return;
-        }
-
-        if (moveCount == MAX_MOVE_COUNT) {
-            moveCount = 0;
         } else {
             return;
         }
 
         switch (direction) {
             case LEFT:
-                if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
-                    mapCamera.position.x--;
+                if (!sideOfMapVisible(direction) && player.getX() + 1 <= mapCamera.position.x) {
+                    mapCamera.position.x -= player.getDistance();
                 }
                 player.moveLeft();
                 break;
 
             case RIGHT:
-                if (!sideOfMapVisible(direction) && player.getX() + 1 == mapCamera.position.x) {
-                    mapCamera.position.x++;
+                if (!sideOfMapVisible(direction) && player.getX() + 1 >= mapCamera.position.x) {
+                    mapCamera.position.x += player.getDistance();
                 }
                 player.moveRight();
                 break;
 
             case UP:
-                if (!sideOfMapVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
-                    mapCamera.position.y++;
+                if (!sideOfMapVisible(direction) && player.getY() + 1 >= mapCamera.position.y) {
+                    mapCamera.position.y += player.getDistance();
                 }
                 player.moveUp();
                 break;
 
             case DOWN:
-                if (!sideOfMapVisible(direction) && player.getY() + 1 == mapCamera.position.y) {
-                    mapCamera.position.y--;
+                if (!sideOfMapVisible(direction) && player.getY() + 1 <= mapCamera.position.y) {
+                    mapCamera.position.y -= player.getDistance();
                 }
                 player.moveDown();
                 break;
@@ -220,13 +218,13 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     public boolean sideOfMapVisible(int direction) {
         switch (direction) {
             case LEFT:
-                return mapCamera.position.x - SCREEN_WIDTH/2 <= 0;
+                return mapCamera.position.x - SCREEN_WIDTH/2 <= player.getDistance();
             case RIGHT:
-                return mapCamera.position.x + SCREEN_WIDTH/2 >= mapWidth;
+                return mapCamera.position.x + SCREEN_WIDTH/2 >= mapWidth - player.getDistance();
             case UP:
-                return mapCamera.position.y + SCREEN_HEIGHT/2 >= mapHeight;
+                return mapCamera.position.y + SCREEN_HEIGHT/2 >= mapHeight - player.getDistance();
             case DOWN:
-                return mapCamera.position.y - SCREEN_HEIGHT/2 <= 0;
+                return mapCamera.position.y - SCREEN_HEIGHT/2 <= player.getDistance();
         }
         return true;
     }

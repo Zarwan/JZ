@@ -15,6 +15,7 @@ public class Player {
     private float x;
     private float y;
     private Texture texture;
+    private float speed = 12;
 
     private static final String PLAYER_IMAGE = "player.png";
 
@@ -49,41 +50,45 @@ public class Player {
         if (!onEdge(LEFT)) {
             return;
         }
-        x--;
+        x -= getDistance();
     }
 
     public void moveRight() {
         if (!onEdge(RIGHT)) {
             return;
         }
-        x++;
+        x += getDistance();
     }
 
     public void moveUp() {
         if (!onEdge(UP)) {
             return;
         }
-        y++;
+        y += getDistance();
     }
 
     public void moveDown() {
         if (!onEdge(DOWN)) {
             return;
         }
-        y--;
+        y -= getDistance();
     }
 
     private boolean onEdge(int direction) {
         switch (direction) {
             case LEFT:
-                return !jz.sideOfMapVisible(LEFT) || x > 0;
+                return !jz.sideOfMapVisible(LEFT) || x - getDistance() > 0;
             case RIGHT:
-                return !jz.sideOfMapVisible(RIGHT) || x < jz.getMapWidth() - 2;
+                return !jz.sideOfMapVisible(RIGHT) || x + getDistance() < jz.getMapWidth() - WIDTH;
             case UP:
-                return !jz.sideOfMapVisible(UP) || y < jz.getMapHeight() - 2;
+                return !jz.sideOfMapVisible(UP) || y + getDistance() < jz.getMapHeight() - HEIGHT;
             case DOWN:
-                return !jz.sideOfMapVisible(DOWN) || y > 0;
+                return !jz.sideOfMapVisible(DOWN) || y - getDistance() > 0;
         }
         return true;
+    }
+
+    public float getDistance() {
+        return speed * Gdx.graphics.getDeltaTime();
     }
 }

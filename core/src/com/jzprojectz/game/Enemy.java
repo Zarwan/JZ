@@ -15,6 +15,8 @@ public class Enemy {
     private float x;
     private float y;
     private Texture texture;
+    private float speed = 3;
+    private int health = 10;
 
     private static final String ENEMY_IMAGE = "handsome.png";
 
@@ -45,16 +47,20 @@ public class Enemy {
         return HEIGHT;
     }
 
+    public void shot() {
+        health--;
+    }
+
     public void follow(Player player) {
-        if (x + WIDTH < player.getX()) {
+        if (player.getX() - (x + WIDTH) > getDistance()) {
             moveRight();
-        } else if (x > player.getX() + player.getWidth()) {
+        } else if (x - (player.getX() + player.getWidth()) > getDistance()) {
             moveLeft();
         }
 
-        if (y < player.getY()) {
+        if (player.getY() - y > getDistance()) {
             moveUp();
-        } else if (y > player.getY()) {
+        } else if (y - player.getY() > getDistance()) {
             moveDown();
         }
     }
@@ -63,28 +69,28 @@ public class Enemy {
         if (!onEdge(LEFT)) {
             return;
         }
-        x--;
+        x -= getDistance();
     }
 
     public void moveRight() {
         if (!onEdge(RIGHT)) {
             return;
         }
-        x++;
+        x += getDistance();
     }
 
     public void moveUp() {
         if (!onEdge(UP)) {
             return;
         }
-        y++;
+        y += getDistance();
     }
 
     public void moveDown() {
         if (!onEdge(DOWN)) {
             return;
         }
-        y--;
+        y -= getDistance();
     }
 
     private boolean onEdge(int direction) {
@@ -99,5 +105,9 @@ public class Enemy {
                 return !jz.sideOfMapVisible(DOWN) || y > 0;
         }
         return true;
+    }
+
+    private float getDistance() {
+        return speed * Gdx.graphics.getDeltaTime();
     }
 }
