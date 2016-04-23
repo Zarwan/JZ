@@ -21,8 +21,24 @@ public abstract class Enemy {
         texture = new Texture(Gdx.files.internal(getImage()));
 
         Random random = new Random();
-        x = random.nextInt(45);
-        y = random.nextInt(30);
+
+        //Initial position is on the outer edge of the map
+        if (random.nextInt(2) == 0) {
+            if (random.nextInt(2) == 0) {
+                x = getWidth() * -1;
+            } else {
+                x = JZ.mapX;
+            }
+            y = random.nextInt(JZ.mapY + getHeight()*2 + 1) - getHeight();
+
+        } else {
+            if (random.nextInt(2) == 0) {
+                y = getHealth() * -1;
+            } else {
+                y = JZ.mapY;
+            }
+            x = random.nextInt(JZ.mapX + getWidth()*2 + 1) - getWidth();
+        }
     }
 
     public Texture getTexture() {

@@ -25,6 +25,8 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     public static final int RIGHT = 2;
     public static final int UP = 3;
     public static final int DOWN = 4;
+    public static final int mapX = 45;
+    public static final int mapY = 30;
     private static final float ARROW_WIDTH = 3;
     private static final float ARROW_HEIGHT = 3;
     private static final float SHOOT_BUTTON_RADIUS = 3;
@@ -48,6 +50,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private int mapHeight;
     private int direction = NEUTRAL;
     private int directionFacing = RIGHT;
+    private int numEnemies = 25;
     private List<Bullet> bullets = new ArrayList<Bullet>();
     private List<Enemy> enemies = new ArrayList<Enemy>();
 
@@ -55,7 +58,6 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     public void create() {
 
         player = new Player(this);
-        enemies.add(new Squidward(this));
 
         staticSpriteBatch = new SpriteBatch();
         dynamicSpriteBatch = new SpriteBatch();
@@ -82,6 +84,11 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
         upArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*2, ARROW_HEIGHT + ARROW_HEIGHT, ARROW_WIDTH, ARROW_HEIGHT, "up_arrow.png");
         downArrowKey = new Button(SCREEN_WIDTH - ARROW_WIDTH*2, 0, ARROW_WIDTH, ARROW_HEIGHT, "down_arrow.png");
         shootButton = new Button(SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, SHOOT_BUTTON_RADIUS, "shooting_button.png");
+
+        for (int i = 0; i < 10 && numEnemies > 0; i++) {
+            enemies.add(new Squidward(this));
+            numEnemies--;
+        }
 
         Gdx.input.setInputProcessor(this);
     }
@@ -131,10 +138,14 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
 
                     if (enemy.isDead()) {
                         enemies.remove(j);
-                        j--;
+                        if (numEnemies > 0) {
+                            enemies.add(new Squidward(this));
+                            numEnemies--;
+                        }
                     }
                     bullets.remove(i);
                     i--;
+                    break;
                 }
             }
             if (bullets.contains(bullet)) {
