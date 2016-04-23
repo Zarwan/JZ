@@ -48,7 +48,6 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
     private int mapHeight;
     private int direction = NEUTRAL;
     private int directionFacing = RIGHT;
-    private int moveCount = 0;
     private List<Bullet> bullets = new ArrayList<Bullet>();
     private List<Enemy> enemies = new ArrayList<Enemy>();
 

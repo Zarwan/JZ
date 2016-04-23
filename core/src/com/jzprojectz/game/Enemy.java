@@ -3,29 +3,26 @@ package com.jzprojectz.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
+import java.util.Random;
+
 import static com.jzprojectz.game.JZ.LEFT;
 import static com.jzprojectz.game.JZ.RIGHT;
 import static com.jzprojectz.game.JZ.UP;
 import static com.jzprojectz.game.JZ.DOWN;
 
-public class Enemy {
-    private final float WIDTH = 2;
-    private final float HEIGHT = 2;
-    private final double DAMAGE = 0.05;
+public abstract class Enemy {
     private JZ jz;
     private float x;
     private float y;
     private Texture texture;
-    private float speed = 3;
-    private int health = 3;
-
-    private static final String ENEMY_IMAGE = "handsome.png";
 
     public Enemy(JZ jz) {
         this.jz = jz;
-        texture = new Texture(Gdx.files.internal(ENEMY_IMAGE));
-        x = 40;
-        y = 25;
+        texture = new Texture(Gdx.files.internal(getImage()));
+
+        Random random = new Random();
+        x = random.nextInt(45);
+        y = random.nextInt(30);
     }
 
     public Texture getTexture() {
@@ -40,23 +37,11 @@ public class Enemy {
         return y;
     }
 
-    public float getWidth() {
-        return WIDTH;
-    }
-
-    public float getHeight() {
-        return HEIGHT;
-    }
-
-    public void shot() {
-        health--;
-    }
-
     public void followAndAttack(Player player) {
 
         //Enemy is in one of the corners of the player sprite
         if (Math.abs(y - (player.getY() + player.getHeight())) <= getDistance() ||
-                Math.abs(player.getY() - (y + HEIGHT)) <= getDistance()) {
+                Math.abs(player.getY() - (y + getHeight())) <= getDistance()) {
 
             if (player.getX() - x >= getDistance()) {
                 moveRight();
@@ -69,7 +54,7 @@ public class Enemy {
         } else {
             boolean movedX = true;
 
-            if (player.getX() - (x + WIDTH) >= getDistance()) {
+            if (player.getX() - (x + getWidth()) >= getDistance()) {
                 moveRight();
             } else if (x - (player.getX() + player.getWidth()) >= getDistance()) {
                 moveLeft();
@@ -77,7 +62,7 @@ public class Enemy {
                 movedX = false;
             }
 
-            if (player.getY() - (y + HEIGHT) > getDistance()) {
+            if (player.getY() - (y + getHeight()) > getDistance()) {
                 moveUp();
             } else if (y - (player.getY() + player.getHeight()) > getDistance()) {
                 moveDown();
@@ -122,7 +107,7 @@ public class Enemy {
     }
 
     public boolean isDead() {
-        return health <= 0;
+        return getHealth() <= 0;
     }
 
     private boolean onEdge(int direction) {
@@ -140,10 +125,20 @@ public class Enemy {
     }
 
     private float getDistance() {
-        return speed * Gdx.graphics.getDeltaTime();
+        return (float) (getSpeed() * Gdx.graphics.getDeltaTime());
     }
 
-    protected double getDamage() {
-        return DAMAGE;
-    }
+    protected abstract double getSpeed();
+
+    protected abstract double getDamage();
+
+    protected abstract String getImage();
+
+    protected abstract int getHealth();
+
+    protected abstract void shot();
+
+    public abstract int getWidth();
+
+    public abstract int getHeight();
 }
