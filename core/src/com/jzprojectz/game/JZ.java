@@ -117,7 +117,7 @@ public class JZ extends ApplicationAdapter implements InputProcessor {
                 continue;
             }
 
-            shapeRenderer.circle(bullet.getX(), bullet.getY(), bullet.getRadius(), 10);
+            shapeRenderer.circle(bullet.getX(), bullet.getY(), bullet.getRadius(), 12);
             if (bullet.collision(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
                 enemy.shot();
                 bullets.remove(i);

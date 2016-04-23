@@ -15,7 +15,6 @@ import static com.jzprojectz.game.JZ.DOWN;
 public class Bullet {
     private final float RADIUS = 16/UNIT;
     private Circle bounds;
-    //private Rectangle bounds;
     private float x;
     private float y;
     private float distance = 20;
@@ -23,11 +22,10 @@ public class Bullet {
     private float speed = 20;
 
     public Bullet(float x, float y, int direction) {
-        this.x = x + RADIUS;
-        this.y = y + RADIUS;
+        this.x = x;
+        this.y = y;
         this.direction = direction;
-        bounds = new Circle(x + RADIUS, y + RADIUS, RADIUS);
-        //bounds = new Rectangle(x, y, RADIUS, RADIUS);
+        bounds = new Circle(x, y, RADIUS);
     }
 
     public boolean collision(float x, float y, float width, float height) {
@@ -53,12 +51,7 @@ public class Bullet {
 
         return (cornerDistanceSq <= Math.pow(RADIUS, 2));
     }
-/*
-    public boolean collision(float x, float y, float width, float height) {
-        Rectangle enemyRectangle = new Rectangle(x, y, width, height);
-        return bounds.overlaps(enemyRectangle);
-    }
-   */
+
     public void moveBullet() {
         switch(direction) {
             case LEFT:
@@ -77,7 +70,6 @@ public class Bullet {
                 y -= getDistance();
                 break;
         }
-        //bounds = new Rectangle(x, y, RADIUS, RADIUS);
         bounds = new Circle(x, y, RADIUS);
         distance -= getDistance();
     }
